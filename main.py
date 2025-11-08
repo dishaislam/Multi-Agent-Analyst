@@ -251,7 +251,7 @@ def main():
             with st.expander("📋 Preview Data", expanded=False):
                 try:
                     df_preview = pd.read_csv(temp_file_path, nrows=10)
-                    st.dataframe(df_preview, use_container_width=True)
+                    st.dataframe(df_preview, use_column_width=True)
                     st.info(f"Showing first 10 rows of {len(pd.read_csv(temp_file_path)):,} total records")
                 except Exception as e:
                     st.error(f"Error previewing file: {str(e)}")
@@ -330,12 +330,18 @@ def main():
             image_files = glob.glob(os.path.join(OUTPUT_DIR, "*.png"))
             
             if image_files:
-                # Organize images by type
+                # Sort for stable ordering
+                image_files = sorted(image_files)
+
+                # Organize images by type (matching analytics filenames)
                 revenue_images = [f for f in image_files if 'revenue' in f.lower()]
                 profit_images = [f for f in image_files if 'profit' in f.lower() or 'margin' in f.lower()]
-                top_product_images = [f for f in image_files if 'top_product' in f.lower()]
+                # note plural "top_products"
+                top_product_images = [f for f in image_files if 'top_products' in f.lower()]
                 correlation_images = [f for f in image_files if 'correlation' in f.lower()]
                 trend_images = [f for f in image_files if 'trend' in f.lower()]
+                # NEW: customer segmentation images
+                segmentation_images = [f for f in image_files if 'customer_segmentation' in f.lower() or 'segmentation' in f.lower()]
                 
                 # Display categorized images
                 if revenue_images:
@@ -357,6 +363,10 @@ def main():
                 if correlation_images:
                     st.subheader("🔗 Correlation Analysis")
                     display_images_grid(correlation_images)
+
+                if segmentation_images:
+                    st.subheader("👥 Customer Segmentation")
+                    display_images_grid(segmentation_images)
                 
                 # Download option
                 st.divider()
